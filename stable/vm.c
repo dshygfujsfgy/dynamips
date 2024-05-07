@@ -286,6 +286,12 @@ void vm_log(vm_instance_t *vm,char *module,char *format,...)
    }
 }
 
+/* temporary function for rust */
+void vm_log_msg(vm_instance_t *vm,char *module,char *msg)
+{ 
+   vm_log(vm, module, "%s", msg);
+}
+
 /* Close the log file */
 int vm_close_log(vm_instance_t *vm)
 {
@@ -352,6 +358,12 @@ void vm_error(vm_instance_t *vm,char *format,...)
    va_end(ap);
 
    fprintf(stderr,"%s '%s': %s",vm_get_log_name(vm),vm->name,buffer);
+}
+
+/* temporary function for rust */
+void vm_error_msg(vm_instance_t *vm,char *msg)
+{
+   vm_error(vm, "%s", msg);
 }
 
 /* Create a new VM instance */
@@ -493,6 +505,8 @@ void vm_free(vm_instance_t *vm)
       vm_chunk_free_all(vm);
 
       /* Free various elements */
+      free(vm->vtty_aux_serial_option.device);
+      free(vm->vtty_con_serial_option.device);
       rommon_var_clear(&vm->rommon_vars);
       free(vm->rommon_vars.filename);
       free(vm->ghost_ram_filename);
@@ -1334,3 +1348,13 @@ int vm_oir_stop(vm_instance_t *vm,u_int slot,u_int subslot)
    return(-1);
 }
 
+/* temporary functions for rust */
+int vm_get_instance_id(vm_instance_t *vm) {
+   return(vm->instance_id);
+}
+char *vm_get_name(vm_instance_t *vm) {
+   return(vm->name);
+}
+int vm_get_status(vm_instance_t *vm) {
+   return(vm->status);
+}
